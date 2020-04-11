@@ -37,7 +37,9 @@ typedef struct
 
 	uint32_t txTm_s;         // 32 bits and the most important field the client cares about. Transmit time-stamp seconds.
 	uint32_t txTm_f;         // 32 bits. Transmit time-stamp fraction of a second.
-} ntp_packet;
+
+							 
+} ntp_packet;				 // summary 384 bytes
 
 
 #define PORTNO 123
@@ -81,8 +83,6 @@ int main(int argc, char *argv[])
 		perror("error in creating socket!");
 	}
 
-
-
 	server = gethostbyname(hostname);	// convert URL to IP-address
 	if(server == NULL)
 	{
@@ -99,13 +99,13 @@ int main(int argc, char *argv[])
 
 	server_address.sin_port = htons(PORTNO);
 
-
 	int status;
 	status = connect(sockfd, (struct sockaddr *) &server_address, sizeof(server_address));
 	if(status < 0)
 	{
 		perror("error with connecting");
 	}
+
 
 	int byte_count;
 	byte_count = write(sockfd, (char *) &packet, sizeof(ntp_packet));
@@ -125,11 +125,10 @@ int main(int argc, char *argv[])
 	packet.txTm_s = ntohl(packet.txTm_s);
 	packet.txTm_f = ntohl(packet.txTm_f);
 
-
 	time_t txTm = (time_t) (packet.txTm_s - NTP_TIMESTAMP_DELTA);
-
 
 	printf("Time: %s", ctime((const time_t *) &txTm));
 
+	printf("exit program\n");
 	return 0;
 }
